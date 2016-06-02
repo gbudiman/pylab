@@ -7,25 +7,22 @@ module Cedict
     processed = 0
     print 'CEDICT entry processed: 0' if _verbosity == :progress_only
 
-    $redis.pipelined do
-      IO.foreach _path do |_l|
-        next if _l =~ REGEX_COMMENT
+    IO.foreach _path do |_l|
+      next if _l =~ REGEX_COMMENT
 
-        _l =~ REGEX_LINE
-        traditional, simplified, pinyin, translations = $1, $2, $3, $4
+      _l =~ REGEX_LINE
+      traditional, simplified, pinyin, translations = $1, $2, $3, $4
 
+      $redis.pipelined do
         update_redis _symbol: simplified, 
                      _pinyin: pinyin,
                      _translations: translations,
                      _verbosity: _verbosity
-
-        processed += 1
-        report_progress(processed) if _verbosity == :progress_only
       end
 
+      processed += 1
       if _verbosity == :progress_only
-        puts
-        puts 'Waiting for Redis thread to complete...'
+        report_progress(processed)
       end
     end
 
@@ -59,13 +56,27 @@ private
       end
     end
 
-    # Update NGRAM
     translations = _translations.split(/\//).reject{ |x| x.blank? }
+
+    # Update NGRAM
     $redis.mapped_hmset(_symbol.to_redis_ngram, { pinyin: _pinyin })
     $redis.sadd(_symbol.to_redis_tmap, translations)
 
+    # Update NGRAM Inverted Indices
+    _symbol.split(//).each do |_char|
+      $redis.sadd(_char.to_inverted_ngram, _symbol)
+    end
+
     translations.each do |t|
       $redis.sadd(t.to_redis_english, _symbol)
+
+      # Update English Inverted Indices
+      t.split(/\s+/).each do |word|
+        (0...word.length).each do |_max|
+          $redis.sadd(word[0.._max].to_inverted_english, t)
+        end
+        #$redis.sadd(word.to_inverted_english, t)
+      end
     end
   end
 end

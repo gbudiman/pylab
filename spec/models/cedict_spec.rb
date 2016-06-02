@@ -2,13 +2,13 @@ require 'rails_helper'
 include Loader
 
 RSpec.describe Cedict do
-  before :all do
-    $redis.flushall
-    Cedict.load_file
-  end
+  # before :all do
+  #   $redis.flushall
+  #   Cedict.load_file
+  # end
 
-  context 'parsing' do
-    it 'should run correctly' do
+  context 'searches' do
+    it 'should return value correctly' do
       s = Ngram.new '考'
       t = Ngram.new 'flower'
 

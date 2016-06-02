@@ -20,6 +20,10 @@ class String
     return "#{Wizardry::NGRAM}#{self}"
   end
 
+  def to_inverted_ngram # (SET)
+    return "#{Wizardry::INVERTED_NGRAM}#{self}"
+  end
+
   def unredis_ngram 
     return self.gsub(Wizardry::NGRAM, '')
   end
@@ -32,8 +36,16 @@ class String
     return "#{Wizardry::ENGLISH}#{self}"
   end
 
+  def to_inverted_english
+    return "#{Wizardry::INVERTED_ENGLISH}#{self}"
+  end
+
   def unredis_english
     return self.gsub(Wizardry::ENGLISH, '')
+  end
+
+  def uninvert_english
+    return self.gsub(Wizardry::INVERTED_ENGLISH, '')
   end
 end
 
@@ -51,6 +63,8 @@ module Wizardry
   PRECOMPUTED_ROOT = 'precomp_root'
   NGRAM = 'n:'
   ENGLISH = 'e:'
+  INVERTED_NGRAM = 'ni:'
+  INVERTED_ENGLISH = 'ne:'
 
   def self.ngram_scan _x
     return "#{NGRAM}*#{_x}*"
@@ -58,5 +72,9 @@ module Wizardry
 
   def self.english_scan _x
     return "#{ENGLISH}*#{_x}*"
+  end
+
+  def self.english_prefixed_search _x
+    return "#{INVERTED_ENGLISH}#{_x}*"
   end
 end

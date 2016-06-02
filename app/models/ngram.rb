@@ -29,7 +29,10 @@ private
   end
 
   def pair_fuzzy_hanzi_to_english
-    $redis.scan_each(match: Wizardry.ngram_scan(@query)).each do |ngram|
+    iterators = $redis.smembers(@query.to_inverted_ngram)
+
+    #$redis.scan_each(match: Wizardry.ngram_scan(@query)).each do |ngram|
+    iterators.each do |ngram|
       match = ngram.unredis_ngram
       $redis.smembers(match.to_redis_tmap).each do |t|
         @pairs[:fuzzy_hanzi].push({
@@ -42,10 +45,13 @@ private
   end
 
   def pair_english_to_hanzi
-    $redis.scan_each(match: Wizardry.english_scan(@query)).each do |fragment|
-      match = fragment.unredis_english
+    iterators = $redis.smembers(@query.to_inverted_english)
+
+    #$redis.scan_each(match: Wizardry.english_scan(@query)).each do |fragment|
+    iterators.each do |fragment|
+      match = fragment.uninvert_english
       mandarin = Hash.new
-      $redis.smembers(fragment).each do |_hz|
+      $redis.smembers(match.to_redis_english).each do |_hz|
         mandarin[_hz] = $redis.hget(_hz.to_redis_ngram, 'pinyin')
       end
 

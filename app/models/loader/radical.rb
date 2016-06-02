@@ -1,7 +1,7 @@
 module Radical
   require 'wizardry'
 
-  def self.load_file _path: Rails.root.join('db', 'seeds', 'radical.rb')
+  def self.load_file _path: Rails.root.join('db', 'seeds', 'radical.rb').to_s
     v_symbols = Set.new
     relations = Hash.new
     roots = Set.new

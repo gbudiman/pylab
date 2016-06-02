@@ -1,8 +1,6 @@
 require 'loader/radical'
 require 'loader/building_block'
+require 'loader/cedict'
 
 module Loader
-  def load
-    puts 'master loaded'
-  end
 end

@@ -1,5 +1,5 @@
 class String
-  def to_redis_symbol
+  def to_redis_symbol # (HASH)
     if self.length != 1
       raise RuntimeError, 
             "Symbol must be exactly one character\n" \
@@ -8,12 +8,32 @@ class String
     return "s:#{self}"
   end
 
-  def to_redis_children
+  def to_redis_children # (SET)
     return "c:#{self}"
   end
 
-  def to_redis_parent
+  def to_redis_parent # (SET)
     return "p:#{self}"
+  end
+
+  def to_redis_ngram # (HASH)
+    return "#{Wizardry::NGRAM}#{self}"
+  end
+
+  def unredis_ngram 
+    return self.gsub(Wizardry::NGRAM, '')
+  end
+
+  def to_redis_tmap # translation mapping Hanzi -> English (SET)
+    return "t:#{self}"
+  end
+
+  def to_redis_english # English translation (SET)
+    return "#{Wizardry::ENGLISH}#{self}"
+  end
+
+  def unredis_english
+    return self.gsub(Wizardry::ENGLISH, '')
   end
 end
 
@@ -28,5 +48,15 @@ class Symbol
 end
 
 module Wizardry
-  PRECOMPUTED = 'precomp'
+  PRECOMPUTED_ROOT = 'precomp_root'
+  NGRAM = 'n:'
+  ENGLISH = 'e:'
+
+  def self.ngram_scan _x
+    return "#{NGRAM}*#{_x}*"
+  end
+
+  def self.english_scan _x
+    return "#{ENGLISH}*#{_x}*"
+  end
 end

@@ -20,7 +20,7 @@ module BuildingBlock
       end
 
       loaded[:roots].each do |root_char|
-        $redis.sadd(Wizardry::PRECOMPUTED, root_char)
+        $redis.sadd(Wizardry::PRECOMPUTED_ROOT, root_char)
       end
     end
   end

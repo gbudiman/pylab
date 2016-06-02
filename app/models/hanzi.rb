@@ -22,7 +22,7 @@ class Hanzi
   end
 
   def self.roots
-    return $redis.smembers(Wizardry::PRECOMPUTED)
+    return $redis.smembers(Wizardry::PRECOMPUTED_ROOT)
   end
 
   def self.leafs

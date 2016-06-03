@@ -1,3 +1,3 @@
-$redis = Redis::Namespace.new(:pylab, 
+$redis = Redis::Namespace.new(:z, 
                               redis: Redis.new(host: 'localhost', 
                                                port: 6379))

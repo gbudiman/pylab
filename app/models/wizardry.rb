@@ -1,3 +1,9 @@
+class Fixnum
+  def to_hanzi_compression_mapping
+    return "#{Wizardry::HANZI_COMPRESSION_MAP}#{self}"
+  end
+end
+
 class String
   def to_redis_symbol # (HASH)
     if self.length != 1
@@ -16,36 +22,62 @@ class String
     return "p:#{self}"
   end
 
-  def to_redis_ngram # (HASH)
-    return "#{Wizardry::NGRAM}#{self}"
+  def to_redis_hanzi
+    return "#{Wizardry::HANZI}#{self.gsub(Wizardry::HANZI, '')}"
   end
 
-  def to_inverted_ngram # (SET)
-    return "#{Wizardry::INVERTED_NGRAM}#{self}"
+  def to_inverted_hanzi
+    return "#{Wizardry::INVERTED_HANZI}#{self.gsub(Wizardry::INVERTED_HANZI, '')}"
   end
 
-  def unredis_ngram 
-    return self.gsub(Wizardry::NGRAM, '')
+  def hanzi_get_pinyin
+    return $redis.hget(self.to_redis_hanzi, Wizardry::HKEY_PINYIN)
   end
 
-  def to_redis_tmap # translation mapping Hanzi -> English (SET)
-    return "t:#{self}"
+  def hanzi_get_english
+    $redis.hget(self.to_redis_hanzi, Wizardry::HKEY_ENGLISH) \
+          .split(/\//) \
+          .reject { |x| x.blank? }
   end
 
-  def to_redis_english # English translation (SET)
-    return "#{Wizardry::ENGLISH}#{self}"
-  end
+  # def to_redis_ngram # (HASH)
+  #   return "#{Wizardry::NGRAM}#{self}"
+  # end
+
+  # def to_inverted_ngram # (SET)
+  #   return "#{Wizardry::INVERTED_NGRAM}#{self}"
+  # end
+
+  # def unredis_ngram 
+  #   return self.gsub(Wizardry::NGRAM, '')
+  # end
+
+  # def to_redis_tmap # translation mapping Hanzi -> English (SET)
+  #   return "t:#{self}"
+  # end
+
+  # def to_redis_english # English translation (SET)
+  #   return "#{Wizardry::ENGLISH}#{self}"
+  # end
 
   def to_inverted_english
-    return "#{Wizardry::INVERTED_ENGLISH}#{self}"
+    return "#{Wizardry::INVERTED_ENGLISH}#{self.gsub(Wizardry::INVERTED_ENGLISH, '')}"
   end
 
-  def unredis_english
-    return self.gsub(Wizardry::ENGLISH, '')
+  # def unredis_english
+  #   return self.gsub(Wizardry::ENGLISH, '')
+  # end
+
+  # def uninvert_english
+  #   return self.gsub(Wizardry::INVERTED_ENGLISH, '')
+  # end
+
+  def to_inverted_pinyin
+    return "#{Wizardry::INVERTED_PINYIN}#{self.gsub(Wizardry::INVERTED_PINYIN, '')}"
   end
 
-  def uninvert_english
-    return self.gsub(Wizardry::INVERTED_ENGLISH, '')
+  def to_inverted_partial
+    return "#{Wizardry::INVERTED_PARTIAL}#{self.gsub(Wizardry::INVERTED_PARTIAL, '')}"
   end
 end
 
@@ -61,10 +93,16 @@ end
 
 module Wizardry
   PRECOMPUTED_ROOT = 'precomp_root'
-  NGRAM = 'n:'
+  SYMBOL_HASH = 's:'
+  HANZI = 'h:'
   ENGLISH = 'e:'
-  INVERTED_NGRAM = 'ni:'
-  INVERTED_ENGLISH = 'ne:'
+  INVERTED_HANZI = 'v:'
+  INVERTED_PINYIN = 'w:'
+  INVERTED_ENGLISH = 'x:'
+  INVERTED_PARTIAL = 'y:'
+  HKEY_PINYIN = 'p'
+  HKEY_ENGLISH = 'e'
+  HANZI_COMPRESSION_MAP = 'hcm:'
 
   def self.ngram_scan _x
     return "#{NGRAM}*#{_x}*"

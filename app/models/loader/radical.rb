@@ -13,7 +13,8 @@ module Radical
 
         ([char] + r_comps).each do |x|
           v_symbols.add x
-          $redis.hsetnx x.to_redis_symbol, 'pinyin', ''
+          #$redis.hsetnx x.to_redis_symbol, 'pinyin', ''
+          #$redis.sadd Wizardry::SYMBOL_HASH, x
         end
 
         if char != comps
@@ -24,6 +25,8 @@ module Radical
       end
     end
 
+    $redis.sadd Wizardry::SYMBOL_HASH, v_symbols.to_a
+
     return {
       symbols: v_symbols.length,
       relations: relations,
@@ -32,6 +35,6 @@ module Radical
   end
 
   def self.count
-    return $redis.scan_each(match: 's:*').to_a.count
+    return $redis.smembers(Wizardry::SYMBOL_HASH).count
   end
 end

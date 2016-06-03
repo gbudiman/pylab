@@ -5,6 +5,7 @@ class Ngram
     @pairs = {
       exact_hanzi: Array.new,
       fuzzy_hanzi: Array.new,
+      fuzzy_pinyin: Array.new,
       fragment_english: Array.new
     }
 
@@ -15,32 +16,43 @@ private
   def make_pairs
     pair_exact_hanzi_to_english
     pair_fuzzy_hanzi_to_english
-    pair_english_to_hanzi
+    # pair_fuzzy_pinyin
+    # pair_english_to_hanzi
   end
 
   def pair_exact_hanzi_to_english
-    if $redis.exists(@query.to_redis_ngram) 
+    key = @query.to_redis_hanzi
+
+    if $redis.exists(key) 
       @pairs[:exact_hanzi].push({
         hanzi: @query,
-        pinyin: $redis.hget(@query.to_redis_ngram, 'pinyin'),
-        english: $redis.smembers(@query.to_redis_tmap).to_a
+        pinyin: key.hanzi_get_pinyin,
+        english: key.hanzi_get_english
       })
     end
   end
 
   def pair_fuzzy_hanzi_to_english
-    iterators = $redis.smembers(@query.to_inverted_ngram)
+    iterators = $redis.smembers(@query.to_inverted_hanzi)
 
-    #$redis.scan_each(match: Wizardry.ngram_scan(@query)).each do |ngram|
-    iterators.each do |ngram|
-      match = ngram.unredis_ngram
-      $redis.smembers(match.to_redis_tmap).each do |t|
-        @pairs[:fuzzy_hanzi].push({
-          hanzi: match,
-          pinyin: $redis.hget(match.to_redis_ngram, 'pinyin'),
-          english: t
-        })
-      end
+    iterators.each do |_hz|
+      @pairs[:fuzzy_hanzi].push({
+        hanzi: _hz,
+        pinyin: _hz.hanzi_get_pinyin,
+        english: _hz.hanzi_get_english
+      })
+    end
+  end
+
+  def pair_fuzzy_pinyin
+    iterators = $redis.smembers(@query.to_inverted_pinyin)
+
+    iterators.each do |hanzi|
+      @pairs[:fuzzy_pinyin].push({
+        hanzi: hanzi,
+        pinyin: $redis.hget(hanzi.to_redis_ngram, 'pinyin'),
+        english: $redis.smembers(hanzi.to_redis_tmap).to_a
+      })
     end
   end
 

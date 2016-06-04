@@ -89,7 +89,11 @@ private
       $redis.sadd(py.downcase.to_inverted_pinyin, _d[:hanzi])
     end
 
-    $redis.sadd(_d[:pinyin].gsub(/[\d\s]+/, '').downcase.to_inverted_pinyin, _d[:hanzi])
+    _d[:pinyin].super_combination.each do |sc|
+      $redis.sadd(sc.to_inverted_pinyin, _d[:hanzi])
+    end
+
+    #$redis.sadd(_d[:pinyin].gsub(/[\d\s]+/, '').downcase.to_inverted_pinyin, _d[:hanzi])
   end
 
   def update_inverted_english _d

@@ -6,7 +6,8 @@ class Ngram
       exact_hanzi: Array.new,
       fuzzy_hanzi: Array.new,
       fuzzy_pinyin: Array.new,
-      fragment_english: Array.new
+      fragment_english: Array.new,
+      partial_english: Array.new
     }
 
     make_pairs
@@ -16,8 +17,9 @@ private
   def make_pairs
     pair_exact_hanzi_to_english
     pair_fuzzy_hanzi_to_english
-    # pair_fuzzy_pinyin
-    # pair_english_to_hanzi
+    pair_fuzzy_pinyin
+    pair_english_to_hanzi
+    pair_partial_to_hanzi
   end
 
   def pair_exact_hanzi_to_english
@@ -45,32 +47,69 @@ private
   end
 
   def pair_fuzzy_pinyin
-    iterators = $redis.smembers(@query.to_inverted_pinyin)
+    iterators = process_multi_syllables _process: :pinyin
 
-    iterators.each do |hanzi|
+    iterators.each do |_hz|
       @pairs[:fuzzy_pinyin].push({
-        hanzi: hanzi,
-        pinyin: $redis.hget(hanzi.to_redis_ngram, 'pinyin'),
-        english: $redis.smembers(hanzi.to_redis_tmap).to_a
+        hanzi: _hz,
+        pinyin: _hz.hanzi_get_pinyin,
+        english: _hz.hanzi_get_english
       })
     end
   end
 
   def pair_english_to_hanzi
-    iterators = $redis.smembers(@query.to_inverted_english)
+    iterators = process_multi_syllables _process: :english
 
-    #$redis.scan_each(match: Wizardry.english_scan(@query)).each do |fragment|
-    iterators.each do |fragment|
-      match = fragment.uninvert_english
-      mandarin = Hash.new
-      $redis.smembers(match.to_redis_english).each do |_hz|
-        mandarin[_hz] = $redis.hget(_hz.to_redis_ngram, 'pinyin')
-      end
-
+    iterators.each do |_hz|
       @pairs[:fragment_english].push({
-        english: match,
-        mandarin: mandarin
+        hanzi: _hz,
+        pinyin: _hz.hanzi_get_pinyin,
+        english: _hz.hanzi_get_english
       })
     end
+  end
+
+  def pair_partial_to_hanzi
+    iterators = $redis.smembers(@query.to_inverted_partial)
+
+    iterators.each do |fragment|
+      $redis.smembers(fragment.to_inverted_english).each do |_hz|
+        @pairs[:partial_english].push({
+          hanzi: _hz,
+          pinyin: _hz.hanzi_get_pinyin,
+          english: _hz.hanzi_get_english
+        })
+      end
+    end
+  end
+
+  def process_multi_syllables _process:
+    converter = lambda do |fn, x|
+      case fn
+      when :pinyin then return x.to_inverted_pinyin
+      when :english then return x.to_inverted_english
+      when :partial then return x.to_inverted_partial
+      end
+    end
+    iterators = Array.new
+    multi_syllable = @query.split(/\s+/)
+
+    if multi_syllable.length > 1
+      fragments = Array.new
+
+      multi_syllable.each do |syl|
+        fragments.push $redis.smembers(converter.curry.(_process).curry.(syl))
+      end
+
+      iterators = fragments.first.dup
+      fragments[1..-1].each do |frag|
+        iterators = iterators & frag
+      end
+    else
+      iterators = $redis.smembers(converter.curry.(_process).curry.(@query))
+    end
+
+    return iterators
   end
 end

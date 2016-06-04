@@ -1,3 +1,16 @@
+class Array
+  def super_combination
+    result = Set.new
+    (1..self.length).each do |dist|
+      (0...self.length).each do |start|
+        result.add (self[start...start+dist].join(''))
+      end
+    end
+
+    return result
+  end
+end
+
 class Fixnum
   def to_hanzi_compression_mapping
     return "#{Wizardry::HANZI_COMPRESSION_MAP}#{self}"
@@ -78,6 +91,11 @@ class String
 
   def to_inverted_partial
     return "#{Wizardry::INVERTED_PARTIAL}#{self.gsub(Wizardry::INVERTED_PARTIAL, '')}"
+  end
+
+  def super_combination
+    toneless = self.gsub(/[^A-Za-z\ ]+/, '').downcase.split(/\s+/)
+    return toneless.super_combination
   end
 end
 

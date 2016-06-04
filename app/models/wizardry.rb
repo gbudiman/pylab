@@ -12,6 +12,10 @@ class Array
 end
 
 class Fixnum
+  def chr8
+    return self.chr(Encoding::UTF_8)
+  end
+
   def to_hanzi_compression_mapping
     return "#{Wizardry::HANZI_COMPRESSION_MAP}#{self}"
   end

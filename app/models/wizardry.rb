@@ -52,9 +52,9 @@ class String
   end
 
   def hanzi_get_english
-    $redis.hget(self.to_redis_hanzi, Wizardry::HKEY_ENGLISH) \
-          .split(/\//) \
-          .reject { |x| x.blank? }
+    w = $redis.hget(self.to_redis_hanzi, Wizardry::HKEY_ENGLISH) || ''
+
+    w.split(/\//).reject { |x| x.blank? }
   end
 
   # def to_redis_ngram # (HASH)

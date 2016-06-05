@@ -2,10 +2,10 @@ require 'rails_helper'
 include Loader
 
 RSpec.describe Cedict do
-  before :all do
-    $redis.flushall
-    Cedict.new
-  end
+  # before :all do
+  #   $redis.flushall
+  #   Cedict.new
+  # end
 
   shared_examples 'non-null result' do
     it 'should return non-zero result' do

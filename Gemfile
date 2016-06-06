@@ -7,8 +7,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'jquery-rails'
 gem 'turbolinks'
 gem 'haml-rails'
-gem 'redis-rails'
-gem 'redis-namespace'
+gem 'redis'
 
 gem 'awesome_print'
 

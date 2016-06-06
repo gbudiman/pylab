@@ -13,6 +13,13 @@ class Hanzi
     @components = Hanzi.sub_components(@char)
   end
 
+  def result
+    return {
+      used_by: @used_by,
+      components: @components
+    }
+  end
+
   def self.sub_components _x
     return $redis.smembers(_x.to_redis_children)
   end

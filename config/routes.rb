@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get     'search/dictionary/:q'           => 'searches#dictionary', constraints: { q: /[^\/]+/ }
+  get     'search/structural/:q'           => 'searches#structural'
+
   mount RedisBrowser::Web => '/redis-browser'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

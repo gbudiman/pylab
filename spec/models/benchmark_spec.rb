@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Query Benchmark' do
   before :all do
-    @query = ['躲藏', '散', '云风',
+    @query = ['躲藏', '散', '云风', '龙',
               'release', 'camera release', 'influen', 'influe standi',
               'jiao', 'nan da xue', 'nandaxue', 'nan2 da4 xue2', 'hai nan2']
   end

@@ -1,0 +1,15 @@
+.search-history-entry-text {
+  text-decoration: underline;
+}
+
+.search-history-entry-text:hover {
+  cursor: pointer;
+}
+
+.search-history-result {
+
+}
+
+.dynamic-remove-button:hover {
+  cursor: pointer;
+}

@@ -11,6 +11,8 @@ gem 'redis'
 
 gem 'awesome_print'
 
+gem 'bower-rails'
+
 group :development, :test do
   gem 'byebug'
   gem 'rspec-rails'

@@ -1,4 +1,4 @@
-class SearchesController < ApplicationController
+class SearchController < ApplicationController
   def dictionary
     render json: Ngram.query(params[:q])
   end

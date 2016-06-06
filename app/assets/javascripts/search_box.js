@@ -18,7 +18,7 @@ search_box_button.on('click', function() {
       search_control_enabled(false);
     }
   }).done(function(res) {
-    console.log(res);
+    update_ngram_list(query, res);
     search_control_enabled(true);
     update_search_history(query, res.length);
     clean_up();

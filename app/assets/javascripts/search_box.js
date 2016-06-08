@@ -11,18 +11,20 @@ search_box.keypress(function(e) {
 search_box_button.on('click', function() {
   var query = search_box.val().trim();
 
-  $.ajax({
-    url: '/search/dictionary/' + query,
-    method: 'GET',
-    beforeSend: function() {
-      search_control_enabled(false);
-    }
-  }).done(function(res) {
-    update_ngram_list(query, res);
-    search_control_enabled(true);
-    update_search_history(query, res.length);
-    clean_up();
-  })
+  if (query.length > 0) {
+    $.ajax({
+      url: '/search/dictionary/' + query,
+      method: 'GET',
+      beforeSend: function() {
+        search_control_enabled(false);
+      }
+    }).done(function(res) {
+      update_ngram_list(query, res);
+      search_control_enabled(true);
+      update_search_history(query, res.length);
+      clean_up();
+    })
+  }
 });
 
 function search_control_enabled(status) {

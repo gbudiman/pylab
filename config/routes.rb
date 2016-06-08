@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   get     'app'                            => 'landing#index'
   get     'search/dictionary/:q'           => 'search#dictionary', constraints: { q: /[^\/]+/ }
   get     'search/structural/:q'           => 'search#structural'
+  get     'viz'                            => 'viz#index'
 
   mount RedisBrowser::Web => '/redis-browser'
   root 'landing#index'

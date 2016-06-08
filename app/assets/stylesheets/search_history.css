@@ -1,3 +1,8 @@
+#search-history {
+  height: 12em;
+  overflow-y: auto;
+}
+
 .search-history-entry-text {
   text-decoration: underline;
 }

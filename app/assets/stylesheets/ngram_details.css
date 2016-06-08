@@ -1,0 +1,8 @@
+#ngram-details {
+  height: 12em;
+  overflow-y: auto;
+}
+
+#ngram-add:hover {
+  cursor: pointer;
+}

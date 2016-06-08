@@ -3,10 +3,15 @@
     = render partial: 'search_box_div'
   %div{class: 'col-xs-12', id: 'search-history'}
     = render partial: 'search_history'
+  %div{class: 'col-xs-12', id: 'ngram-memo'}
+    = render partial: 'ngram_memo'
 %div{class: 'col-xs-5', id: 'ngram-div'}
   %div{class: 'col-xs-12', id: 'ngram-details'}
+    = render partial: 'ngram_details'
   %div{class: 'col-xs-12', id: 'ngram-list'}
     = render partial: 'ngram_list'
   / %div{class: 'col-xs-12', id: 'ngram-debug'}
   /   = render partial: 'ngram_debug'
 %div{class: 'col-xs-4', id: 'hanzi-div'}
+  %div{class: 'col-xs-12', id: 'hanzi-debug'}
+    = render partial: 'hanzi_debug'

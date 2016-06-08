@@ -1,0 +1,16 @@
+#ngram-list {
+  height: 16em;
+  overflow-y: auto;
+}
+
+.ngram-row {
+  cursor: pointer;
+}
+
+.tooltip-inner {
+  text-align: left;
+}
+
+.ngram-mouseover-list {
+  margin-left: -2em;
+}

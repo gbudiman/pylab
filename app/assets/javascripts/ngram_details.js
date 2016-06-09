@@ -1,15 +1,30 @@
-var ngram_list_table = $('#ngram-list-table');
+//var ngram_list_table = $('#ngram-list-table');
+var ngram_list_table_body = $('#ngram-list-table-body');
 var ngram_memo_table = $('#ngram-memo-table');
 var ngram_details = $('#ngram-details');
 var ngram_details_hanzi = $('#ngram-details-hanzi');
 var ngram_add = $('#ngram-add');
 
-ngram_details.on('click', function() { ngram_add.hide(); });
+ngram_add.on('click', function() { ngram_add.hide(); });
 ngram_add.on('click', add_ngram_to_memo);
 
 function already_in_memo(x) {
   var handle_selector = '[data-handle-id="' + x + '"]';
   return ngram_memo_table.find(handle_selector).length > 0;
+}
+
+function make_ngram_interactive(x) {
+  ngram_details_hanzi.empty();
+  x.make_hanzi_interactive(ngram_details_hanzi);
+}
+
+function launch_structural_query(x) {
+  $.ajax({
+    url: '/search/structural/' + x,
+    method: 'GET'
+  }).done(function(res) {
+    update_hanzi_debug_table(x, res);
+  })
 }
 
 function ngram_details_conditionally_show_add_button() {
@@ -52,7 +67,7 @@ function add_ngram_to_memo() {
   var handle_selector = '[data-handle-id="' + handle_id + '"]';
 
   if (!already_in_memo(handle_id)) {
-    var clone = ngram_list_table
+    var clone = ngram_list_table_body
                   .find(handle_selector)
                   .clone(false)
                   .append(memo_cell_deletion())

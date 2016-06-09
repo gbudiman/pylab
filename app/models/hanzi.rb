@@ -14,9 +14,13 @@ class Hanzi
   end
 
   def result
+    translation = Ngram.query_exact_hanzi(@char) || { pinyin: 'No dictionary entry' }
     return {
+      char: @char,
       used_by: @used_by,
-      components: @components
+      components: @components,
+      pinyin: translation[:pinyin],
+      english: translation[:english]
     }
   end
 

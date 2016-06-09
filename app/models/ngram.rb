@@ -2,7 +2,7 @@ class Ngram
   include Wizardry
 
   attr_reader :query, :pairs
-  def initialize _x
+  def initialize _x, _execute_only: nil
     @query = _x
     @pairs = {
       exact_hanzi: Array.new,
@@ -12,11 +12,21 @@ class Ngram
       partial_english: Array.new
     }
 
-    make_pairs
+    if _execute_only
+      case _execute_only
+      when :hanzi then pair_exact_hanzi_to_english
+      end
+    else
+      make_pairs
+    end
   end
 
   def self.query _x
     return Ngram.new(_x).pairs.map{ |k, v| v }.reduce(:+)
+  end
+
+  def self.query_exact_hanzi _x
+    return Ngram.new(_x, _execute_only: :hanzi).pairs.map{ |k, v| v }.reduce(:+).first
   end
 
 private

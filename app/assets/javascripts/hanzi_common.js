@@ -14,6 +14,7 @@ var hanzi_debug_table = $('#hanzi-debug-table');
 function update_hanzi_debug_table(caller, x) {
   var row_locator = 'tr[data-table-hanzi="' + x.char + '"]';
 
+  hanzi_debug_table.show();
   if (hanzi_debug_table.find(row_locator).length == 0) {
     var td_caller = $('<td>'),
         td_char = $('<td>'),

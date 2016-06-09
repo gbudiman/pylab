@@ -1,4 +1,4 @@
-//var ngram_list_table = $('#ngram-list-table');
+var ngram_list_table = $('#ngram-list-table');
 var ngram_list_table_body = $('#ngram-list-table-body');
 var hanzi_truncation_limit = 6;
 var english_truncation_limit = 32;
@@ -8,6 +8,7 @@ var ngram_details_pinyin = $('#ngram-details-pinyin');
 var ngram_details_english = $('#ngram-details-english');
 
 function update_ngram_list(query, res) {
+  ngram_list_table.show();
   ngram_list_table_body.empty();
 
   var ldist = compute_min_levenshtein_distance(res, query);

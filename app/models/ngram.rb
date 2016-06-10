@@ -22,7 +22,7 @@ class Ngram
   end
 
   def self.query _x
-    return Ngram.new(_x).pairs.map{ |k, v| v }.reduce(:+)
+    return Ngram.new(_x).pairs.map{ |k, v| v }.reduce(:+).uniq
   end
 
   def self.query_exact_hanzi _x
@@ -43,11 +43,17 @@ private
   end
 
   def make_pairs
-    pair_exact_hanzi_to_english
-    pair_fuzzy_hanzi_to_english
-    pair_fuzzy_pinyin
-    pair_english_to_hanzi
-    pair_partial_to_hanzi
+    threads = [
+      Thread.new { pair_partial_to_hanzi },
+      Thread.new { pair_english_to_hanzi },
+      Thread.new { pair_fuzzy_pinyin },
+      Thread.new { pair_fuzzy_hanzi_to_english },
+      Thread.new { pair_exact_hanzi_to_english },
+    ]
+
+    threads.each do |_t|
+      _t.join
+    end
   end
 
   def pair_exact_hanzi_to_english

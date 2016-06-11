@@ -4,6 +4,7 @@ var ngram_memo_table = $('#ngram-memo-table');
 var ngram_details = $('#ngram-details');
 var ngram_details_hanzi = $('#ngram-details-hanzi');
 var ngram_add = $('#ngram-add');
+var animation_memo_duration = 500;
 
 ngram_add.on('click', function() { ngram_add.hide(); });
 ngram_add.on('click', add_ngram_to_memo);
@@ -50,7 +51,7 @@ function memo_cell_deletion() {
 }
 
 function remove_memo_cell() {
-  $(this).parent().remove();
+  $(this).parent().hide(animation_memo_duration, function() { $(this).remove() });
   ngram_details_conditionally_show_add_button();
 }
 
@@ -73,7 +74,8 @@ function add_ngram_to_memo() {
                   .append(memo_cell_deletion())
                   .on('click', add_to_ngram_details)
                   .on('mouseover', reveal_memo_remove)
-                  .on('mouseout',  hide_memo_remove);
+                  .on('mouseout',  hide_memo_remove)
+                  .hide();
 
     $.each(clone.find('[data-toggle="ngram-tooltip"]'), function() {
       $(this)
@@ -86,5 +88,6 @@ function add_ngram_to_memo() {
     });
 
     ngram_memo_table.prepend(clone);
+    clone.show(animation_memo_duration);
   }
 }

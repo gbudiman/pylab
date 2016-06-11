@@ -1,5 +1,6 @@
 var hanzi_debug_row = $('#hanzi-debug-row');
 var hanzi_debug_table = $('#hanzi-debug-table');
+var animation_hanzi_duration = 250;
 
 // function update_hanzi_debug_row(x) {
 //   hanzi_debug_row
@@ -26,15 +27,22 @@ function update_hanzi_debug_table(caller, x) {
     x.used_by.join('').make_hanzi_interactive(td_used_by, true);
     x.components.join('').make_hanzi_interactive(td_components, true);
 
-    hanzi_debug_table
-      .append(
-        $('<tr>')
-          .attr('data-table-hanzi', x.char)
-          .append(td_caller)
-          .append(td_char)
-          .append(td_used_by)
-          .append(td_components)
-          .on('dblclick', function() { $(this).remove(); } ));
+    var new_row = $('<tr>')
+                    .attr('data-table-hanzi', x.char)
+                    .append(td_caller)
+                    .append(td_char)
+                    .append(td_used_by)
+                    .append(td_components)
+                    .hide()
+                    .on('dblclick', 
+                        function() { 
+                          $(this).hide(animation_hanzi_duration,
+                            function() {
+                              $(this).remove();
+                            })
+                        });
+    hanzi_debug_table.append(new_row);
+    new_row.show(animation_hanzi_duration);
   }
 }
 

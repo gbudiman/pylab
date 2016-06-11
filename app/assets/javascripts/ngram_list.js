@@ -6,6 +6,7 @@ var ngram_details = $('#ngram-details');
 var ngram_details_hanzi = $('#ngram-details-hanzi');
 var ngram_details_pinyin = $('#ngram-details-pinyin');
 var ngram_details_english = $('#ngram-details-english');
+var animation_details_duration = 100;
 
 function update_ngram_list(query, res) {
   ngram_list_table.show();
@@ -58,12 +59,20 @@ function add_to_ngram_details() {
   ngram_details.attr('data-details', $(this).attr('data-details'));
   ngram_details.attr('data-handle-id', $(this).attr('data-handle-id'));
 
+  ngram_details_hanzi.hide();
+  ngram_details_pinyin.hide();
+  ngram_details_english.hide();
+
   make_ngram_interactive(d.hanzi);
   ngram_details_pinyin.text(d.pinyin);
   ngram_details_english.empty();
   $.each(d.english, function(i, x) {
     ngram_details_english.append('<li>' + x + '</li>');
   });
+
+  ngram_details_hanzi.show(animation_details_duration);
+  ngram_details_pinyin.show(animation_details_duration);
+  ngram_details_english.show(animation_details_duration);
   ngram_details_conditionally_show_add_button();
 }
 

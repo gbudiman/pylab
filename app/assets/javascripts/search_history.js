@@ -1,9 +1,17 @@
 var search_box = $('#search-box');
 var search_box_button = $('#search-box-button');
 var search_history_list = $('#search-history-list');
+var animation_duration = 250;
 
 function update_search_history(query, count) {
-  search_history_list.prepend(generate_search_history_entry(query, count));
+  var new_entry = generate_search_history_entry(query, count);
+
+  search_history_list
+    .find('[data-query="' + query + '"]')
+    .hide(animation_duration, function() { $(this).remove() });
+  
+  search_history_list.prepend(new_entry);
+  new_entry.show(animation_duration);
 }
 
 function generate_search_history_entry(query, count) {
@@ -14,7 +22,8 @@ function generate_search_history_entry(query, count) {
            .append(function() { return result_count(count); })
            .append(history_entry_remove_button)
            .on('mouseover',  function() { trigger_dynamic_remove_button($(this), true)  })
-           .on('mouseout',   function() { trigger_dynamic_remove_button($(this), false) });
+           .on('mouseout',   function() { trigger_dynamic_remove_button($(this), false) })
+           .hide();
 }
 
 function reciprocate_query() {
@@ -45,7 +54,8 @@ function history_entry_remove_button() {
 }
 
 function remove_entry() {
-  $(this).parent().remove();
+  $(this).parent()
+           .hide(animation_duration, function() { $(this).remove() });
 }
 
 function trigger_dynamic_remove_button(el, _enable) {

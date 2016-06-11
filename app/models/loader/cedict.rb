@@ -22,7 +22,7 @@ class Cedict
       traditional, simplified, pinyin, english = $1, $2, $3, $4
 
       update_redis _hanzi: simplified,
-                   _pinyin: pinyin,
+                   _pinyin: pinyin.gsub(/u\:/, 'v'),
                    _english: english
 
       @processed += 1

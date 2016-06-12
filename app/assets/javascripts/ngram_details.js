@@ -44,15 +44,24 @@ function ngram_details_conditionally_show_add_button() {
 
 function memo_cell_deletion() {
   return $('<td>')
+           .addClass('memo-non-trigger')
            .append($('<span>')
                      .addClass('glyphicon glyphicon-remove')
-                     .css('visibility', 'hidden'))
-           .on('click', remove_memo_cell);
+                     .css('visibility', 'hidden')
+                     .on('click', 
+                         function(event) {
+                           remove_memo_cell($(this));
+                           event.stopPropagation();
+                         }));
 }
 
-function remove_memo_cell() {
-  $(this).parent().hide(animation_memo_duration, function() { $(this).remove() });
-  ngram_details_conditionally_show_add_button();
+function remove_memo_cell(el) {
+  el.parent().parent()
+    .hide(animation_memo_duration, 
+          function() { 
+            $(this).remove();
+            ngram_details_conditionally_show_add_button();
+          });
 }
 
 function reveal_memo_remove() {
